@@ -76,7 +76,7 @@ def get_csv(csv_folder, slash="\\"):
     -------
     data_20_21 : DATAFRAME
         Contains the inforamtion inside the .CSVs.
-    audio_paths : LIST
+    sorted_names : LIST
         Names corresponding to audio files in the first column of the .CSVs.
     """
     csv_names = [a for a in os.listdir(csv_folder) if a.endswith('.csv')]
@@ -96,8 +96,19 @@ def get_csv(csv_folder, slash="\\"):
     for filename in data_frame["Fichier Audio"]:
         if filename.endswith(".wav"):
             audio_names = np.append(audio_names, filename.replace('/', slash))
+
+    # sort audio files names
+    # We want to sort it by year
+    years = np.unique([path[4:8] for path in audio_names])
+    sorted_names = np.array([], dtype='<U49')
+    # and inside each year, sort it by date.
+    for year in years:
+        idx_to_sort = np.where(np.array([path[4:8] for path in audio_names]) == year)[0]
+        temp_path = np.copy(audio_names[idx_to_sort])
+        temp_path.sort()
+        sorted_names = np.append(temp_path, sorted_names)
             
-    return data_frame, audio_names
+    return data_frame, sorted_names
 
 def butter_pass_filter(data, cutoff, fs, order=1, mode='high'):
     """
