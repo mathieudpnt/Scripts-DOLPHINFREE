@@ -1,9 +1,7 @@
 # Scripts-DOLPHINFREE
-A repository containing scripts and data used in *Lehnhoff et al, 2022* (in submission process).
-
-## Description
 This repository contains the files used to analyse data obtained during the <a href="https://umr-marbec.fr/en/the-projects/dolphinfree/">DOLPHINFREE project</a>. The goal was to detect and identify clicks and whisltes in audio recordings of common dolphins. 
 
+## Description
 "BBPs", "Clicks" and "Whisltes" folders each treat a type of signal emitted by dolphins.   
 - Each folder contains numbered scripts for step-by-step execution. 
 - ___Utils.py files contain the functions necessary to the execution of the other scripts
@@ -27,5 +25,5 @@ Feel free to contact me if you have questions, tips or anything else to say. I'd
 
 Loïc Lehnhoff - <loic.lehnhoff@gmail.com>
 
-## Publication
-**IN SUBMISSION PROCESS:** Lehnhoff, L.; Glotin, H.; Bernard, S.; Dabin, W.; Le Gall, Y.; Menut, E.; Meheust, E.; Peltier, H.; Pochat, A.; Pochat, K.; Rimaud, T.; Sourget, Q.; Spitz, J.; Van Canneyt, O.; Mérigot, B. *Behavioural response of common *dolphins Delphinus* delphis to a bio-inspired acoustic device for limiting fishery by-catch.* Sustainability **2022**, 1, 0
+## Related to
+Results and scripts are presented in details in: Lehnhoff, L.; Glotin, H.; Bernard, S.; Dabin, W.; Le Gall, Y.; Menut, E.; Meheust, E.; Peltier, H.; Pochat, A.; Pochat, K.; Rimaud, T.; Sourget, Q.; Spitz, J.; Van Canneyt, O.; Mérigot, B. *Behavioural response of common *dolphins Delphinus* delphis to a bio-inspired acoustic device for limiting fishery by-catch.* Sustainability **2022**, 1, 0 (**IN SUBMISSION PROCESS**)
