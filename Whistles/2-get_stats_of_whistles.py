@@ -22,9 +22,9 @@ print("Importation of packages complete!")
 
 #%% Parameters
 print("\rSetting up parameters...", end="\r")
-audio_f = "/media/loic/DOLPHINFREE/Acoustique"  # Path to recordings 
-csv_f = "./../CSV_data"                         # Path to data in csv
-save_f = "./Trajectories"						# Path were
+audio_f = "./../Audio_data" 	# Path to recordings 
+csv_f = "./../CSV_data"         # Path to data in csv
+save_f = "./Trajectories"		# Path were
 results_f = "./Evaluation"
 
 keep_if = 1 	# minimal length of a whistle to be kept

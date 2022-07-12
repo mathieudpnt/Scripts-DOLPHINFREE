@@ -22,9 +22,9 @@ print("Importation of packages done!")
 #%% Parameters
 # Paths
 print("\rSetting up parameters...", end="\r")
-audio_f = "/media/loic/DOLPHINFREE/Acoustique"  # Path to recordings 
-csv_f = "./../CSV_data"                         # Path to data in csv
-save_f = "./Results"                            # Path to results
+audio_f = "./../Audio_data"  # Path to recordings 
+csv_f = "./../CSV_data"      # Path to data in csv
+save_f = "./Results"         # Path to results
 
 # For functions
 sr = 512000             # sample rate of the recordings

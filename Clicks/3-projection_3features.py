@@ -24,7 +24,7 @@ print("Importation of packages done!")
 
 #%% Parameters
 print("\rSetting up parameters...", end="\r")
-audio_f = "/media/loic/DOLPHINFREE/Acoustique"          # Path to audio data
+audio_f = "./../Audio_data"                             # Path to recordings 
 csv_f = "./../CSV_data"                                 # Path to csv data
 res_f = "./Results"                                     # Path to save results
 peaks_f = "peaks_02052022"                              # Path to save results
