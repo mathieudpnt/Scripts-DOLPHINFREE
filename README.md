@@ -1,4 +1,4 @@
-# Scripts-DOLPHINFREE TEST
+# Scripts-DOLPHINFREE
 This repository contains the files used to analyse data obtained during the <a href="https://umr-marbec.fr/en/the-projects/dolphinfree/">DOLPHINFREE project</a>. The goal was to detect and identify clicks and whisltes in audio recordings of common dolphins.   
 
 ![signal dolphin](audio_ex.png?raw=true)
