@@ -15,6 +15,7 @@ library(stringr)      # "gsub" function
 library(rcompanion)   # "fullPTable" function
 library(multcompView) # "multcompLetters" function
 library(ggplot2)
+library(pgirmess)
 #library(tidyquant)    # geom_ma() if rolling average needed
 
 
@@ -386,55 +387,60 @@ barPlot(computeStats(acoustic.dta, behavior, clicks_per_dolphin),
         xname="Behaviours of dolphins", height=150,
         ytitle="Mean number of clicks per dolphin per min")
 
-#### NEEDS MORE DATA: Nets plots + KW analysis #### 
+#### Nets plots + KW analysis #### 
 # Whistles
-letters <- multcompLetters(fullPTable(pairwise.wilcox.test(acoustic.dta$whistling_time_per_dolphin, 
-                                                           acoustic.dta$net,p.adjust = "bonferroni")$p.value))
-myletters_df <- data.frame(net=names(letters$Letters),
-                           letter = unname(letters$Letters))
-#myletters_df$letter <- rep("", length(myletters_df$letter)) # optional
+#KW test
+kruskal.test(acoustic.dta$whistling_time_per_dolphin ~ acoustic.dta$net)
+# p<0.05 so post-hoc
+kruskalmc(acoustic.dta$whistling_time_per_dolphin, acoustic.dta$net)
+# DIY : letters
+myletters_df <- data.frame(net=c("SSF", "chalut_blanc", "chalut_vert", "tremail", "grand_filet"),
+                           letter = c("a","ad","bd","cd","a"))
 barPlot(computeStats(acoustic.dta, net, whistling_time_per_dolphin/375),
-        myletters_df,
-        net, old_names = c("SSF", "chalut_blanc", "chalut_vert", "tremail"),
-        new_names = c("no net", "white trawl", "green trawl", "tremail"),
+        NULL,
+        net, old_names = c("SSF", "chalut_blanc", "chalut_vert", "tremail", "grand_filet"),
+        new_names = c("Absent", "Nylon trawl net", "PE trawl net", "Gill net", "Long gill net"),
         xname="Fishing nets", height=.6,
         ytitle="Mean whistling time per dolphin per min")+
     theme(axis.text.x=element_text(size=8.5))
 
 # BBPs
-letters <- multcompLetters(fullPTable(pairwise.wilcox.test(acoustic.dta$BBPs_per_dolphin, 
-                                                           acoustic.dta$net,p.adjust = "BH")$p.value))
-myletters_df <- data.frame(net=names(letters$Letters),
-                           letter = unname(letters$Letters))
-#myletters_df$letter <- rep("", length(myletters_df$letter)) # optional
+#KW test
+kruskal.test(acoustic.dta$BBPs_per_dolphin ~ acoustic.dta$net)
+# p<0.05 so post-hoc
+kruskalmc(acoustic.dta$BBPs_per_dolphin, acoustic.dta$net)
+# DIY : letters
+myletters_df <- data.frame(net=c("SSF", "chalut_blanc", "chalut_vert", "tremail", "grand_filet"),
+                           letter = c("a","a","a","a","a"))
 barPlot(computeStats(acoustic.dta, net, BBPs_per_dolphin),
-        myletters_df,
-        net, old_names = c("SSF", "chalut_blanc", "chalut_vert", "tremail"),
-        new_names = c("no net", "white trawl", "green trawl", "tremail"),
+        NULL,
+        net, old_names = c("SSF", "chalut_blanc", "chalut_vert", "tremail", "grand_filet"),
+        new_names = c("Absent", "Nylon trawl net", "PE trawl net", "Gill net", "Long gill net"),
         xname="Fishing nets", height=.8,
         ytitle="Mean number of BBPs per dolphin per min")+
   theme(axis.text.x=element_text(size=8.5))
 
 # Clicks
-letters <- multcompLetters(fullPTable(pairwise.wilcox.test(acoustic.dta$clicks_per_dolphin, 
-                                                           acoustic.dta$net,p.adjust = "BH")$p.value))
-myletters_df <- data.frame(net=names(letters$Letters),
-                           letter = unname(letters$Letters))
+#KW test
+kruskal.test(acoustic.dta$clicks_per_dolphin ~ acoustic.dta$net)
+# p<0.05 so post-hoc
+kruskalmc(acoustic.dta$clicks_per_dolphin, acoustic.dta$net)
+# DIY : letters
+myletters_df <- data.frame(net=c("SSF", "chalut_blanc", "chalut_vert", "tremail", "grand_filet"),
+                           letter = c("ae","ad","bd","cd","e"))
 barPlot(computeStats(acoustic.dta, net, clicks_per_dolphin),
-        myletters_df,
-        net, old_names = c("SSF", "chalut_blanc", "chalut_vert", "tremail"),
-        new_names = c("no net", "white trawl", "green trawl", "tremail"),
+        NULL,
+        net, old_names = c("SSF", "chalut_blanc", "chalut_vert", "tremail", "grand_filet"),
+        new_names = c("Absent", "Nylon trawl net", "PE trawl net", "Gill net", "Long gill net"),
         xname="Fishing nets", height=120,
         ytitle="Mean number of clicks per dolphin per min")+
   theme(axis.text.x=element_text(size=8.5))
 
 
-#### NEEDS MORE DATA: Beacon plots + optional KW analysis ####
+#### : Beacon plots + KW analysis (letters not shown for lisibility) ####
 # Whistles
-letters <- multcompLetters(fullPTable(pairwise.wilcox.test(acoustic.dta$whistling_time_per_dolphin, 
-                                                           acoustic.dta$beacon,p.adjust = "BH")$p.value))
-myletters_df <- data.frame(beacon=names(letters$Letters),
-                           letter = unname(letters$Letters))
+#KW test
+kruskal.test(acoustic.dta$whistling_time_per_dolphin ~ acoustic.dta$beacon)
 barPlot(computeStats(acoustic.dta, beacon, whistling_time_per_dolphin/375),
         NULL,
         beacon, old_names = names(letters$Letters), new_names = names(letters$Letters),
@@ -445,13 +451,8 @@ barPlot(computeStats(acoustic.dta, beacon, whistling_time_per_dolphin/375),
 # NC stands for "Unknown". Corresponding to categories where the beacon was not turned on yet ('BEF')
 
 # BBPs
-letters <-  fullPTable(pairwise.wilcox.test(acoustic.dta$BBPs_per_dolphin, 
-                                acoustic.dta$beacon,p.adjust = "BH")$p.value)
-letters[is.na(letters)] <- 0 # errors appears, we really should not compare these
-letters <- multcompLetters(letters)
-
-myletters_df <- data.frame(beacon=names(letters$Letters),
-                           letter=unname(letters$Letters))
+#KW test
+kruskal.test(acoustic.dta$BBPs_per_dolphin ~ acoustic.dta$beacon)
 barPlot(computeStats(acoustic.dta, beacon, BBPs_per_dolphin),
         NULL,
         beacon, old_names = names(letters$Letters), new_names = names(letters$Letters),
@@ -462,10 +463,8 @@ barPlot(computeStats(acoustic.dta, beacon, BBPs_per_dolphin),
 # NC stands for "Unknown". Corresponding to categories where the beacon was not turned on yet ('BEF')
 
 # Clicks
-letters <- multcompLetters(fullPTable(pairwise.wilcox.test(acoustic.dta$clicks_per_dolphin, 
-                                                           acoustic.dta$beacon,p.adjust = "BH")$p.value))
-myletters_df <- data.frame(beacon=names(letters$Letters),
-                           letter=unname(letters$Letters))
+#KW test
+kruskal.test(acoustic.dta$clicks_per_dolphin ~ acoustic.dta$beacon)
 barPlot(computeStats(acoustic.dta, beacon, clicks_per_dolphin),
         NULL,
         beacon, old_names = names(letters$Letters), new_names = names(letters$Letters),

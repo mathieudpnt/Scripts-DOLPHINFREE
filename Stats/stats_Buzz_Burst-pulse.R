@@ -145,7 +145,7 @@ mod.bbp$deviance/mod.bbp$df.residual
 # overdispersion with GLM quasipoisson
 # underdispersion with glm NB
 # Try with ZINB:
-mod.buzz <- glm.nb(Buzz ~ behavior + acoustic * fishing_net
+mod.buzz <- glm.nb(Buzz ~ behavior + fishing_net + acoustic
                    + offset(log(number)),
                    data=bbp.dta)
 car::Anova(mod.buzz, type=3)
@@ -263,7 +263,11 @@ barPlot(computeStats(bbp.dta, acoustic, BBPs_per_dolphin),
 # Buzz
 table <- cld(emmeans(mod.buzz, pairwise~acoustic, adjust="tukey"), Letters = letters)
 myletters_df <- data.frame(acoustic=table$acoustic,
-                           letter = trimws(table$.group))
+                           letter = trimws(table$.group))myletters_df <- data.frame(acoustic=c("AP","AV","AV+D","D","D+AP"),                                                                                   letter = c("a","a","a","a","a"))
+#error, no acoustic in model:
+myletters_df <- data.frame(acoustic=c("AP","AV","AV+D","D","D+AP"),
+                           letter = c("a","a","a","a","a"))
+
 barPlot(computeStats(bbp.dta, acoustic, Buzz_per_dolphin),
         myletters_df, acoustic, height=0.45, ytitle="Mean number of Buzzes per dolphin per min",
         old_names = c("AV","AV+D","D","D+AP","AP"),
