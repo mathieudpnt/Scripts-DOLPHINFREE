@@ -399,7 +399,7 @@ myletters_df <- data.frame(net=c("SSF", "chalut_blanc", "chalut_vert", "tremail"
 barPlot(computeStats(acoustic.dta, net, whistling_time_per_dolphin/375),
         NULL,
         net, old_names = c("SSF", "chalut_blanc", "chalut_vert", "tremail", "grand_filet"),
-        new_names = c("Absent", "Nylon trawl net", "PE trawl net", "Gill net", "Long gill net"),
+        new_names = c("Absent", "Nylon trawl net", "PE trawl net", "Nylon gill net", "Long nylon gill net"),
         xname="Fishing nets", height=.6,
         ytitle="Mean whistling time per dolphin per min")+
     theme(axis.text.x=element_text(size=8.5))
@@ -415,7 +415,7 @@ myletters_df <- data.frame(net=c("SSF", "chalut_blanc", "chalut_vert", "tremail"
 barPlot(computeStats(acoustic.dta, net, BBPs_per_dolphin),
         NULL,
         net, old_names = c("SSF", "chalut_blanc", "chalut_vert", "tremail", "grand_filet"),
-        new_names = c("Absent", "Nylon trawl net", "PE trawl net", "Gill net", "Long gill net"),
+        new_names = c("Absent", "Nylon trawl net", "PE trawl net", "Nylon gill net", "Long nylon gill net"),
         xname="Fishing nets", height=.8,
         ytitle="Mean number of BBPs per dolphin per min")+
   theme(axis.text.x=element_text(size=8.5))
@@ -431,19 +431,20 @@ myletters_df <- data.frame(net=c("SSF", "chalut_blanc", "chalut_vert", "tremail"
 barPlot(computeStats(acoustic.dta, net, clicks_per_dolphin),
         NULL,
         net, old_names = c("SSF", "chalut_blanc", "chalut_vert", "tremail", "grand_filet"),
-        new_names = c("Absent", "Nylon trawl net", "PE trawl net", "Gill net", "Long gill net"),
+        new_names = c("Absent", "Nylon trawl net", "PE trawl net", "Nylon gill net", "Long nylon gill net"),
         xname="Fishing nets", height=120,
         ytitle="Mean number of clicks per dolphin per min")+
   theme(axis.text.x=element_text(size=8.5))
 
 
-#### : Beacon plots + KW analysis (letters not shown for lisibility) ####
+#### Beacon plots + KW analysis (letters not shown for readability) ####
 # Whistles
 #KW test
 kruskal.test(acoustic.dta$whistling_time_per_dolphin ~ acoustic.dta$beacon)
+names = computeStats(acoustic.dta, beacon, whistling_time_per_dolphin/375)["beacon"]
 barPlot(computeStats(acoustic.dta, beacon, whistling_time_per_dolphin/375),
         NULL,
-        beacon, old_names = names(letters$Letters), new_names = names(letters$Letters),
+        beacon, old_names = unlist(names), new_names = unlist(names),
         xname="Signals from bio-inspired beacon", height=0.9, size=3,
         ytitle="Mean whistling time per dolphin per min")+
   theme(axis.text.x=element_text(size=8))+
@@ -453,9 +454,10 @@ barPlot(computeStats(acoustic.dta, beacon, whistling_time_per_dolphin/375),
 # BBPs
 #KW test
 kruskal.test(acoustic.dta$BBPs_per_dolphin ~ acoustic.dta$beacon)
+names = computeStats(acoustic.dta, beacon, whistling_time_per_dolphin/375)["beacon"]
 barPlot(computeStats(acoustic.dta, beacon, BBPs_per_dolphin),
         NULL,
-        beacon, old_names = names(letters$Letters), new_names = names(letters$Letters),
+        beacon, old_names = unlist(names), new_names = unlist(names),
         xname="Signals from bio-inspired beacon", height=0.5, size=3,
         ytitle="Mean number of BBPs per dolphin per min")+
       theme(axis.text.x=element_text(size=8))+
@@ -465,9 +467,10 @@ barPlot(computeStats(acoustic.dta, beacon, BBPs_per_dolphin),
 # Clicks
 #KW test
 kruskal.test(acoustic.dta$clicks_per_dolphin ~ acoustic.dta$beacon)
+names = computeStats(acoustic.dta, beacon, whistling_time_per_dolphin/375)["beacon"]
 barPlot(computeStats(acoustic.dta, beacon, clicks_per_dolphin),
         NULL,
-        beacon, old_names = names(letters$Letters), new_names = names(letters$Letters),
+        beacon, old_names = unlist(names), unlist(names),
         xname="Signals from bio-inspired beacon", height=150, size=3,
         ytitle="Mean number of clicks per dolphin per min")+
   theme(axis.text.x=element_text(size=8))+
