@@ -180,7 +180,7 @@ green_group = np.where(rad_cc[:,0] <= 1.)[0]
 red_group = np.where(rad_cc[:,1] <= 1.)[0]
 black_group = np.delete(np.arange(len(rad_cc)), np.unique(np.append(green_group, red_group)))
 
-# # let's see the small groups on spectrograms
+# # let's see the small groups on spectrograms (comment if data not available)
 # green_names = np.copy(linked_files[green_group])
 # red_names = np.copy(linked_files[red_group])
 # names = np.intersect1d(np.unique(red_names), np.unique(green_names))
@@ -259,6 +259,21 @@ if input("Update count of clicks and save new groups ? [Y/n]") == "Y":
     # => mainly anthropogenic clicks, we exclude them and see you next script !
     np.save(os.path.join(res_f, save_features, "idx_clicks_not_from_humans.npy"),
         black_group)
+    # Find all previous positions
+    all_positions = np.array([], dtype=int)
+    for click_file in os.listdir(os.path.join(res_f, peaks_f)):
+        all_positions = np.append(all_positions,
+            np.load(os.path.join(res_f, peaks_f, click_file)))
+    keep_positions = np.copy(all_positions[black_group])
+    keep_linked_files = np.copy(linked_files[black_group])
+    # save the position of clicks which were not anthropogenic
+    for linked_file in np.unique(keep_linked_files):
+        np.save(os.path.join(res_f, 
+                peaks_f+"_without_SONARS", 
+                audio_paths[linked_file][-27:-4]+"_cleanpeaks.npy"),
+            all_positions[np.where(keep_linked_files==linked_file)[0]])
+
+
     ##### update count of clicks #####
     curr_numbers = pd.read_csv(os.path.join(res_f, "number_of_clicks_" + version + ".csv"))
     new_count = np.zeros(len(audio_paths))
