@@ -50,7 +50,7 @@ print("Importation of csv data complete!")
 #%%## Extract features for each click #####
 # mean freq, median freq, freq std
 if input("(Re)compute features? [Y/n] ") == "Y":
-    features = np.zeros((0,3))
+    features = np.zeros((0,4))
     linked_files = np.zeros(0, dtype=int)
 
     print("\nPre execution: Looking for clicks in recordings.")
@@ -76,7 +76,7 @@ if input("(Re)compute features? [Y/n] ") == "Y":
         freq_std = np.std(Amplitude_audio[:,clicks_pos_spec], axis=0)
 
         # expend results
-        features = np.append(features, np.array([mean_freq, median_freq, freq_std]).T, axis=0)
+        features = np.append(features, np.array([mean_freq, median_freq, freq_std, clicks_pos]).T, axis=0)
         linked_files = np.append(linked_files, np.repeat(file, len(clicks_pos_spec)))
 
     # save results
@@ -89,7 +89,8 @@ if input("(Re)compute features? [Y/n] ") == "Y":
 
 ### Make UMAP projection ###
 print("\nMain execution: Projection.")
-features = np.load(os.path.join(res_f, save_features, "features.npy"))
+features = np.load(os.path.join(res_f, save_features, "features.npy"))[:,:3]
+print(features.shape)
 linked_files = np.load(os.path.join(res_f, save_features, "linked_files.npy"))
 print(f"\tClassification of {len(linked_files)} clicks")
 
@@ -260,19 +261,14 @@ if input("Update count of clicks and save new groups ? [Y/n]") == "Y":
     np.save(os.path.join(res_f, save_features, "idx_clicks_not_from_humans.npy"),
         black_group)
     # Find all previous positions
-    all_positions = np.array([], dtype=int)
-    for click_file in os.listdir(os.path.join(res_f, peaks_f)):
-        all_positions = np.append(all_positions,
-            np.load(os.path.join(res_f, peaks_f, click_file)))
-    keep_positions = np.copy(all_positions[black_group])
-    keep_linked_files = np.copy(linked_files[black_group])
-    # save the position of clicks which were not anthropogenic
-    for linked_file in np.unique(keep_linked_files):
+    features = np.load(os.path.join(res_f, save_features, "features.npy"))[:,-1]
+    black_positions = features[black_group]
+    black_files = linked_files[black_group]
+    for file in np.unique(black_files):
         np.save(os.path.join(res_f, 
                 peaks_f+"_without_SONARS", 
-                audio_paths[linked_file][-27:-4]+"_cleanpeaks.npy"),
-            all_positions[np.where(keep_linked_files==linked_file)[0]])
-
+                audio_paths[file][-27:-4]+"_cleanpeaks.npy"),
+            black_positions[np.where(black_files==file)[0]])
 
     ##### update count of clicks #####
     curr_numbers = pd.read_csv(os.path.join(res_f, "number_of_clicks_" + version + ".csv"))
