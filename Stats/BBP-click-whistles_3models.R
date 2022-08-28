@@ -16,6 +16,7 @@ library(rcompanion)   # "fullPTable" function
 library(multcompView) # "multcompLetters" function
 library(ggplot2)
 library(pgirmess)
+library(postHoc)
 #library(tidyquant)    # geom_ma() if rolling average needed
 
 
@@ -39,6 +40,23 @@ acoustic.dta <- clicks.dta
 acoustic.dta$number_of_bbp <- bbp.dta$number_of_BBP
 acoustic.dta$total_whistles_duration <- whistles.dta$total_whistles_duration
 rm(whistles.dta, bbp.dta, clicks.dta)
+
+# add group IDs
+id2020 <- read.table(file=paste0(folder, 'CSV_data/Audio_Data_2020.csv'),
+                     sep = ',', header=TRUE)[1:396,]
+id2021 <- read.table(file=paste0(folder, 'CSV_data/Audio_Data_2021.csv'),
+                     sep = ',', header=TRUE)[1:96,]
+id2021$ID <- id2021$ID+max(id2020$ID)
+id2021$Seq <- id2021$Seq+max(id2020$Seq)
+id.dta <- rbind(id2020, id2021)
+id.dta$Fichier.Audio <-str_sub(id.dta$Fichier.Audio, -27, -5)
+acoustic.dta$ID <- rep(-1, 490)
+for (name in acoustic.dta$audio_names){
+  acoustic.dta$ID[match(name, acoustic.dta$audio_names)] <- id.dta$ID[match(name, id.dta$Fichier.Audio)]
+}
+acoustic.dta$ID <- as.factor(acoustic.dta$ID)
+rm(id2020, id2021, id.dta)
+
 
 # suppress "T" acoustic data (other groups not tested on our variables)
 acoustic.dta <- acoustic.dta[acoustic.dta$acoustic!="T",]
@@ -124,7 +142,6 @@ ftable(factor(acoustic.dta$fishing_net), factor(acoustic.dta$behavior), factor(a
 
 # => Beacon and net have modalities with <10 individuals => analysis impossible
 # => They will be treated apart from the rest as they are likely to be biased
-
 
 ##################### STATISTICAL MODELLING ###########################
 ### Model tested
@@ -477,7 +494,8 @@ barPlot(computeStats(acoustic.dta, beacon, clicks_per_dolphin),
   scale_x_discrete(guide=guide_axis(n.dodge = 2))
 # NC stands for "Unknown". Corresponding to categories where the beacon was not turned on yet ('BEF')
 
-#### WHY NOT: Number plots ####
+
+#### Plots by number of dolphins ####
 # Whistles
 numb_stats_w <- computeStats(acoustic.dta, number, total_whistles_duration/375)
 numb_stats_w[is.na(numb_stats_w)] <- 0
@@ -520,3 +538,52 @@ numb_stats_c %>%
   ylab("Mean number of clicks per min")+
   xlab("Number of echolocation clicks in group")
 
+
+#### Plots by Group ID ####
+# Whistles
+numb_stats_w <- computeStats(acoustic.dta, ID, whistling_time_per_dolphin/375)
+numb_stats_w[is.na(numb_stats_w)] <- 0
+numb_stats_w$ID <- as.factor(numb_stats_w$ID)
+numb_stats_w %>%
+  ggplot(aes(x=ID, y=mean, group=1)) +
+  geom_errorbar(aes(x=ID, ymin=mean-sd, ymax=mean+sd), 
+                color="red", width=.1, show.legend = FALSE)+
+  geom_point() + scale_x_discrete(guide = guide_axis(n.dodge = 2))+
+  theme_light() + theme(text=element_text(size=12)) +
+  ylab("Mean whistling time per min")+
+  xlab("ID of dolphins group")
+
+# BBPs
+numb_stats_b <- computeStats(acoustic.dta, ID, BBPs_per_dolphin)
+numb_stats_b[is.na(numb_stats_b)] <- 0
+numb_stats_b$ID <- as.factor(numb_stats_b$ID)
+
+numb_stats_b %>%
+  ggplot(aes(x=ID, y=mean, group=1)) +
+  geom_errorbar(aes(x=ID, ymin=mean-sd, ymax=mean+sd), 
+                color="red", width=.1, show.legend = FALSE)+
+  geom_point() + scale_x_discrete(guide = guide_axis(n.dodge = 2))+
+  theme_light() + theme(text=element_text(size=12)) +
+  ylab("Number of BBPs per min")+
+  xlab("ID of dolphins group")
+
+# Clicks
+numb_stats_c <- computeStats(acoustic.dta, ID, clicks_per_dolphin)
+numb_stats_c[is.na(numb_stats_c)] <- 0
+numb_stats_c$ID <- as.factor(numb_stats_c$ID)
+
+numb_stats_c %>%
+  ggplot(aes(x=ID, y=mean, group=1)) +
+  geom_errorbar(aes(x=ID, ymin=mean-sd, ymax=mean+sd), 
+                color="red", width=.1)+
+  geom_point() + scale_x_discrete(guide = guide_axis(n.dodge = 2))+
+  theme_light() + theme(text=element_text(size=12)) +
+  ylab("Mean number of clicks per min")+
+  xlab("ID of dolphin group")
+
+# KW test on IDs 
+# whistles (excluding groups "2" because 1 sample and groups because no whistles recorded )
+data_test <- acoustic.dta[acoustic.dta$ID!="2",]
+print( posthocKW(data_test$whistling_time_per_dolphin, data_test$ID))
+print( posthocKW(data_test$BBPs_per_dolphin, data_test$ID))
+print( posthocKW(data_test$clicks_per_dolphin, data_test$ID))
