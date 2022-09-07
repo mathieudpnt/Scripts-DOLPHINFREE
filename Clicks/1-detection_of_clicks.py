@@ -84,7 +84,7 @@ for file in range(len(audio_paths)):
         map_clean=np.copy(map_peaks)
 
     # save detections
-    # np.save(os.path.join(save_f, audio_paths[file][-27:-4], "_peaks"), 
+    # np.save(os.path.join(save_f, audio_paths[file][-27:-4] + "_peaks"), 
     #     np.nonzero(map_clean)[0])
     
     print(f"\r\t1-  {file+1} on {len(audio_paths)}: Found {len(np.nonzero(map_clean)[0])} \

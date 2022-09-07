@@ -78,9 +78,9 @@ def get_csv(csv_folder, slash="\\"):
     csv_names = [a for a in os.listdir(csv_folder) if a.endswith('.csv')]
 
     # import data
-    data = import_csv(csv_names[0], csv_folder, separator=slash)
+    data = import_csv(csv_names[0], csv_folder, slash=slash)
     for i in range(1,len(csv_names)):
-        data = data + import_csv(csv_names[i], csv_folder, separator=slash)[1:]
+        data = data + import_csv(csv_names[i], csv_folder, slash=slash)[1:]
     data_frame = pd.DataFrame(data=data[:][1:], columns=data[:][0])
 
     # change dtype for selected columns

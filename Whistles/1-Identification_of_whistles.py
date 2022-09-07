@@ -24,7 +24,7 @@ print("Importation of packages complete!")
 print("\rSetting up parameters...", end="\r")
 audio_f = "./../Audio_data"  # Path to recordings  
 csv_f = "./../CSV_data"      # Path to data in csv
-save_f = "./Trajectories"	 # Path were
+save_f = "./Trajectories"	 # Path were results are stored
 
 # Audio parameters
 start = 0 		# start time for signal (in sec)
@@ -63,21 +63,19 @@ print("Importation of csv data complete!\n")
 
 #%% Main execution
 print("Spectral detector of whistles")
-for file in np.array([418]):#range(len(audio_paths)):
+for file in range(len(audio_paths)):
 	# import audio recording
 	signal, fe = load(os.path.join(audio_f, audio_paths[file][4:8], audio_paths[file]), 
 		sr=None)
 	signal = signal[int(start*fe):int(stop*fe)]
 	# resample
 	signal_dec = resample(signal, int(((stop-start)*new_sr)))
-	print("1")
 
 	# extract spectral informations
 	Magnitude_audio = stft(signal_dec, n_fft=nfft, hop_length=hop_length)
 	spectre = np.copy(np.abs(Magnitude_audio[f_min:,:]))
 	# PCEN could replace spectrogram in very noisy recordings
 	#spectre_pcen = pcen(np.abs(Magnitude_audio) * (2**31), bias=10)[f_min:,:]
-	print("2")
 
 	# Selection algorithm
 	max_loc_per_bin_check1 = get_local_maxima(spectre, spectre, nrg_rap)[1]
@@ -86,7 +84,6 @@ for file in np.array([418]):#range(len(audio_paths)):
 	corrected_traj = sparsity_ridoff(final_traj, error_thresh=sparsity)
 	harmonized_traj = harmonize_trajectories(corrected_traj, min_r=min_r_coef, 
 		min_common=taille_traj_min*2, delete=True)
-	print("3")
 
 	# Saving results
 	values = np.unique(harmonized_traj)[1:]
@@ -96,30 +93,10 @@ for file in np.array([418]):#range(len(audio_paths)):
 		dict_traj[key+1] = [np.where(harmonized_traj == value)[0].tolist(),
 							np.where(harmonized_traj == value)[1].tolist()] 
 		startstop[key] = np.array([min(dict_traj[key+1][1]), max(dict_traj[key+1][1])])
-	print("4")
 
-	# f = open(os.path.join(save_f, audio_paths[file].split('/')[-1][:-4] + ".json"), "w")
-	# json.dump(dict_traj, f, indent=4)
-	# f.close()
+	f = open(os.path.join(save_f, audio_paths[file].split('/')[-1][:-4] + ".json"), "w")
+	json.dump(dict_traj, f, indent=4)
+	f.close()
 
 	print(f"\r\tFile {file+1} on {len(audio_paths)}: found {len(values)} whistles", end='\r')
 print("\nDetection of whistles finished!")
-
-#%% Display the beautiful selection
-final_traj[final_traj != 0] = 1
-#harmonized_traj[harmonized_traj != 0] = 1
-
-# colors to differenciate detected trajectories
-prism = cm.get_cmap('prism', 256)
-newcolors = prism(np.linspace(0, 1, np.unique(harmonized_traj).shape[0]))
-pink = np.array([0/256, 0/256, 0/256, 1])
-newcolors[0, :] = pink
-newcmp = ListedColormap(newcolors)
-
-a = plot_spectrums([amplitude_to_db(spectre), max_loc_per_bin_check1, final_traj, harmonized_traj], 
-			   ['gray_r', 'gray', 'gray', newcmp], 
-			   titles=['Spectrogram (dB scale)', 'Local maxima selection', 'Extraction of continuous trajectories',
-			   'Exclusion of harmonics'], 
-			   ylabels=["Frequency"]*4,
-			   bins=375, title="")
-plt.show(block=True)

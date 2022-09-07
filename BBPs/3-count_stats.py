@@ -25,7 +25,7 @@ print("Parameters ready to use!")
 
 #%% Importation of ata and function
 print("\rImportation of csv data", end="\r")
-from FuncUtils import get_csv, get_category
+from BBPUtils import get_csv, get_category
 data_20_21, audio_paths = get_csv(csv_f, slash="/")
 print("Importation of csv data complete!")
 
@@ -92,7 +92,7 @@ if input('\nSave table with categories [Y/n] ? ') == 'Y':
     for cat in ['acoustic', 'fishing_net', 'behavior', 'beacon', 'date', 'number', 'net']:
         data_to_save[cat] = get_category(files_in_folder, audio_paths, data_20_21, cat)
 
-    data_to_save['audio_names'] = [file[:-10] for file in files_in_folder]
+    data_to_save['audio_names'] = files_in_folder
     data_to_save['Buzz'] = Buzz_per_file.astype(int)
     data_to_save['Burst-pulse'] = Burst_per_file.astype(int)
     data_to_save.to_csv(os.path.join(save_f, datetime.now().strftime("%d-%m-%y_%Hh%M")+"_number_of_BBP.csv"), 

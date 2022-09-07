@@ -22,10 +22,9 @@ print("Importation of packages complete!")
 
 #%% Parameters
 print("\rSetting up parameters...", end="\r")
-audio_f = "./../Audio_data" 	# Path to recordings 
 csv_f = "./../CSV_data"         # Path to data in csv
-save_f = "./Trajectories"		# Path were
-results_f = "./Evaluation"
+save_f = "./Trajectories"		# Path were trajectories are stored
+results_f = "./Evaluation"		# Path were results are stored
 
 keep_if = 1 	# minimal length of a whistle to be kept
 print("Parameters ready to use!")
