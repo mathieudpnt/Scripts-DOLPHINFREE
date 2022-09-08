@@ -196,10 +196,9 @@ mod.bbp$deviance/mod.bbp$df.residual
 
 ### Model for clicks
 # Using NB model:
-mod.cli <- gilm.nb(number_of_clicks ~ acoustic + fishing_net + acoustic:fishing_net + offset(log(number)), 
+mod.cli <- glm.nb(number_of_clicks ~ acoustic + fishing_net + acoustic:fishing_net + offset(log(number)), 
                data=acoustic.dta)
 car::Anova(mod.cli, type=3)
-shapiro.test(residuals(mod.cli)) # H0 : normality -> cannot be rejected if p > 0.05
 dwtest(mod.cli) # H0 -> independent if p>0.05 (autocorrelation if p<0.05)
 bptest(mod.cli) # H0 -> homoscedasticity if p<0.05
 mod.cli$deviance/mod.cli$df.residual
