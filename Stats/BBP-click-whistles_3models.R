@@ -76,10 +76,10 @@ plot(acoustic.dta) # nothing that we can see
 100*sum(acoustic.dta$number_of_clicks == 0)/nrow(acoustic.dta)
 100*sum(acoustic.dta$number_of_bbp == 0)/nrow(acoustic.dta)
 100*sum(acoustic.dta$total_whistles_duration == 0)/nrow(acoustic.dta)
-# 3.6%, 53.7% & 24.7% of our data are zeros. Will have to be dealt with.
+# 5.8%, 53.7% & 27.1% of our data are zeros. Will have to be dealt with.
 
 # QUESTION: This study is aimed at understanding if dolphin's acoustic activity
-# is influenced bytheir behavior, the emission of a pinger or a fishing net.
+# is influenced by their behavior, the emission of a pinger or a fishing net.
 
 # Dependent variables (Y): number_of_clicks, number_of_bbp, total_whistles_duration. 
 # Explanatory variables (X): acoustic, fishing_net, behavior, beacon, net, number.
@@ -174,7 +174,6 @@ nb.whi <- glm.nb(total_whistles_duration ~
 vuong(zero.whi, nb.whi)  #(if p-value<0.05 then first model in comparison is better)
 mod.whi <- zero.whi # => zeroinflated model is indeed better suited
 car::Anova(mod.whi, type=3)
-shapiro.test(residuals(mod.whi)) # H0 : normality -> not rejected if p>0.05
 dwtest(mod.whi) # H0 -> independent if p>0.05 (autocorrelation if p<0.05)
 bptest(mod.whi) # H0 -> homoscedasticity if p<0.05
 # No normality but we do not need it
@@ -190,7 +189,6 @@ mod.bbp <- glm.nb(number_of_bbp ~ acoustic + fishing_net + behavior
 car::Anova(mod.bbp, type=3)
 dwtest(mod.bbp) # H0 -> independent if p>0.05 (autocorrelation if p<0.05)
 bptest(mod.bbp) # H0 -> homoscedasticity if p<0.05
-# Normality not needed in GLM, hypotheses verified !
 mod.bbp$deviance/mod.bbp$df.residual 
 # slight underdispersion, not improved with ZINB so we keep this
 
@@ -203,7 +201,6 @@ car::Anova(mod.cli, type=3)
 shapiro.test(residuals(mod.cli)) # H0 : normality -> cannot be rejected if p > 0.05
 dwtest(mod.cli) # H0 -> independent if p>0.05 (autocorrelation if p<0.05)
 bptest(mod.cli) # H0 -> homoscedasticity if p<0.05
-# Normality not needed in GLM, hypotheses verified !
 mod.cli$deviance/mod.cli$df.residual
 # slight overdispersion. (ZINB does not clearly improve results so we keep this)
 
