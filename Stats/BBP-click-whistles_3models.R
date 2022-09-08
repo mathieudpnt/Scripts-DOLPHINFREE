@@ -168,7 +168,7 @@ par(mfrow=c(1,1))
 zero.whi <- zeroinfl(total_whistles_duration ~ 
                       acoustic + fishing_net + behavior + offset(log(number)), 
                     data=acoustic.dta, dist='negbin')
-nb.whi <- glim.nb(total_whistles_duration ~ 
+nb.whi <- glm.nb(total_whistles_duration ~ 
                      acoustic + fishing_net + behavior + offset(log(number)), 
                    data=acoustic.dta)
 # comparison ZINB VS NB model
@@ -184,7 +184,7 @@ mod.whi$df.null/mod.whi$df.residual
 # No normality of residuals for GLM
 # overdispersion with GLIM quasipoisson
 #try with glim NB:
-mod.bbp <- glim.nb(number_of_bbp ~ acoustic + fishing_net + behavior 
+mod.bbp <- glm.nb(number_of_bbp ~ acoustic + fishing_net + behavior 
                   + offset(log(number)),
                   data=acoustic.dta)
 car::Anova(mod.bbp, type=3)
