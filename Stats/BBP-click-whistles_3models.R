@@ -125,7 +125,7 @@ shapiro.test(acoustic.dta$total_whistles_duration)
 shapiro.test(acoustic.dta$number_of_bbp)
 shapiro.test(acoustic.dta$number_of_clicks)
 # p-values are significant => they do not follow normal distributions
-# will need a transformation or the use of a glm model
+# will need a transformation or the use of a glim model
 
 # X Number of individuals per level
 summary(factor(acoustic.dta$acoustic))
@@ -145,11 +145,12 @@ ftable(factor(acoustic.dta$fishing_net), factor(acoustic.dta$behavior), factor(a
 
 ##################### STATISTICAL MODELLING ###########################
 ### Model tested
-# LM: Linear model (residual hypothesis: normality, homoscedasticity, independant)
-# GLM: Generalized linear model (residual hypothesis: homoscedasticity, independant)
-# NB : Negative Binomial model (usually, when overdispersion with GLM)
-# ZINB: Zero inflated negative binomial model (residual hypothesis: homoscedasticity, independant
-# using number as an offset (more dolphins => more signals)
+# GLM: General linear model (residual hypothesis: normality, homoscedasticity, independant)
+# GLIM: Generalized linear model (residual hypothesis: uncorrelated residuals)
+# NB : Negative Binomial model (residual hypothesis: independantM)
+# ZINB: Zero inflated negative binomial model (residual hypothesis: independant)
+
+# We are using number as an offset (more dolphins => more signals)
 
 # beacon and net explanatory variables could not be tested in models 
 # as they contain information already present in "fishing_net" which is more 
@@ -161,13 +162,13 @@ ftable(factor(acoustic.dta$fishing_net), factor(acoustic.dta$behavior), factor(a
 par(mfrow=c(1,1))
 
 ### Model for whistles
-# Residual hypotheses not verified for LM
-# Overdipsersion when using GLM (negative binomial)
+# Residual hypotheses not verified for GLM
+# Overdipsersion when using GLIM (negative binomial)
 # Using ZINB:
 zero.whi <- zeroinfl(total_whistles_duration ~ 
                       acoustic + fishing_net + behavior + offset(log(number)), 
                     data=acoustic.dta, dist='negbin')
-nb.whi <- glm.nb(total_whistles_duration ~ 
+nb.whi <- glim.nb(total_whistles_duration ~ 
                      acoustic + fishing_net + behavior + offset(log(number)), 
                    data=acoustic.dta)
 # comparison ZINB VS NB model
@@ -176,14 +177,14 @@ mod.whi <- zero.whi # => zeroinflated model is indeed better suited
 car::Anova(mod.whi, type=3)
 dwtest(mod.whi) # H0 -> independent if p>0.05 (autocorrelation if p<0.05)
 bptest(mod.whi) # H0 -> homoscedasticity if p<0.05
-# No normality but we do not need it
-
+mod.whi$df.null/mod.whi$df.residual 
+# no dispersion, perfect
 
 ### Model for BBP
-# No normality of residuals for LM
-# overdispersion with GLM quasipoisson
-#try with glm NB:
-mod.bbp <- glm.nb(number_of_bbp ~ acoustic + fishing_net + behavior 
+# No normality of residuals for GLM
+# overdispersion with GLIM quasipoisson
+#try with glim NB:
+mod.bbp <- glim.nb(number_of_bbp ~ acoustic + fishing_net + behavior 
                   + offset(log(number)),
                   data=acoustic.dta)
 car::Anova(mod.bbp, type=3)
@@ -195,7 +196,7 @@ mod.bbp$deviance/mod.bbp$df.residual
 
 ### Model for clicks
 # Using NB model:
-mod.cli <- glm.nb(number_of_clicks ~ acoustic + fishing_net + acoustic:fishing_net + offset(log(number)), 
+mod.cli <- gilm.nb(number_of_clicks ~ acoustic + fishing_net + acoustic:fishing_net + offset(log(number)), 
                data=acoustic.dta)
 car::Anova(mod.cli, type=3)
 shapiro.test(residuals(mod.cli)) # H0 : normality -> cannot be rejected if p > 0.05
