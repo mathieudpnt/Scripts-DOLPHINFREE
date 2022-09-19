@@ -19,6 +19,7 @@ library(pgirmess)
 library(postHoc)
 #library(tidyquant)    # geom_ma() if rolling average needed
 
+n_bins = 187.5 # number of bins per sec for spectrograms (whistles)
 
 ################# DATASET IMPORTS #####################################
 folder <- './../'
@@ -268,11 +269,11 @@ acoustic.dta$clicks_per_dolphin <- acoustic.dta$number_of_clicks/acoustic.dta$nu
 table <- cld(emmeans(mod.whi, pairwise~fishing_net, adjust="tukey"), Letters = letters)
 myletters_df <- data.frame(fishing_net=table$fishing_net,
                            letter = trimws(table$.group))
-barPlot(computeStats(acoustic.dta, fishing_net, whistling_time_per_dolphin/375), # 375 bins = 1 sec
+barPlot(computeStats(acoustic.dta, fishing_net, whistling_time_per_dolphin/n_bins),
         myletters_df, fishing_net, 
         old_names = c("SSF","F"), new_names = c("Absent", "Present"),
-        xname="Presence/Asence of fishing net", height=.5, 
-        ytitle="Mean whistling time per dolphin per min")
+        xname="Presence/Asence of fishing net", height=1, 
+        ytitle="Mean whistling time per dolphin per min (in sec)")
 
 # BBP
 table <- cld(emmeans(mod.bbp, pairwise~fishing_net, adjust="tukey"), Letters = letters)
@@ -299,8 +300,8 @@ barPlot(computeStats(acoustic.dta, fishing_net, clicks_per_dolphin),
 # Whistles
 table <- cld(emmeans(mod.whi, pairwise~acoustic, adjust="tukey"), Letters = letters)
 myletters_df <- data.frame(acoustic=table$acoustic,letter = trimws(table$.group))
-barPlot(computeStats(acoustic.dta, acoustic, whistling_time_per_dolphin/375),
-        myletters_df, acoustic, height=0.65, ytitle="Mean whistling time per dolphin per min",
+barPlot(computeStats(acoustic.dta, acoustic, whistling_time_per_dolphin/n_bins),
+        myletters_df, acoustic, height=1.3, ytitle="Mean whistling time per dolphin per min (in sec)",
         old_names = c("AV","AV+D","D","D+AP","AP"),
         new_names = c("BEF","BEF+DUR","DUR", "DUR+AFT", "AFT"),
         xname="Activation sequence")
@@ -332,9 +333,9 @@ letters_df$acoustic <- computeLetters(emmeans(mod.whi, pairwise~fishing_net:acou
                                       "acoustic")$acoustic
 letters_df <- letters_df[, c("acoustic","fishing_net","letter")]
 letters_df$letter <- gsub(" ", "", letters_df$letter)
-barPlot(computeStats(acoustic.dta, fishing_net, whistling_time_per_dolphin/375, two=acoustic),
+barPlot(computeStats(acoustic.dta, fishing_net, whistling_time_per_dolphin/n_bins, two=acoustic),
         NULL, acoustic, fill=fishing_net,
-        old_names = c("AV","AV+D","D","D+AP","AP"), ytitle="Mean whistling time per dolphin per min",
+        old_names = c("AV","AV+D","D","D+AP","AP"), ytitle="Mean whistling time per dolphin per min (in sec)",
         new_names = c("BEF","BEF+DUR","DUR", "DUR+AFT", "AFT"),
         xname="Activation sequence", height=c(.95,.95,.95,1,.95,1,.95,1,1,1), 
         colours=c("#E69F00","#999999"), size=5,
@@ -374,8 +375,8 @@ barPlot(computeStats(acoustic.dta, fishing_net, clicks_per_dolphin, two=acoustic
 # Whistles
 table <- cld(emmeans(mod.whi, pairwise~behavior, adjust="tukey"), Letters = letters)
 myletters_df <- data.frame(behavior=table$behavior,letter = trimws(table$.group))
-barPlot(computeStats(acoustic.dta, behavior, whistling_time_per_dolphin/375),
-        myletters_df, behavior, height=0.75, ytitle="Mean whistling time per dolphin per min",
+barPlot(computeStats(acoustic.dta, behavior, whistling_time_per_dolphin/n_bins),
+        myletters_df, behavior, height=1.5, ytitle="Mean whistling time per dolphin per min (in sec)",
         old_names = c("CHAS", "DEPL", "SOCI"),
         new_names = c("Foraging", "Travelling", "Socialising"),
         xname="Behaviours of dolphins")
@@ -410,12 +411,12 @@ kruskalmc(acoustic.dta$whistling_time_per_dolphin, acoustic.dta$net)
 # DIY : letters
 myletters_df <- data.frame(net=c("SSF", "chalut_blanc", "chalut_vert", "tremail", "grand_filet"),
                            letter = c("a","ad","bd","cd","a"))
-barPlot(computeStats(acoustic.dta, net, whistling_time_per_dolphin/375),
+barPlot(computeStats(acoustic.dta, net, whistling_time_per_dolphin/n_bins),
         NULL,
         net, old_names = c("SSF", "chalut_blanc", "chalut_vert", "tremail", "grand_filet"),
         new_names = c("Absent", "Nylon trawl net", "PE trawl net", "Nylon gill net", "Long nylon gill net"),
         xname="Fishing nets", height=.6,
-        ytitle="Mean whistling time per dolphin per min")+
+        ytitle="Mean whistling time per dolphin per min (in sec)")+
     theme(axis.text.x=element_text(size=8.5))
 
 # BBPs
@@ -455,12 +456,12 @@ barPlot(computeStats(acoustic.dta, net, clicks_per_dolphin),
 # Whistles
 #KW test
 kruskal.test(acoustic.dta$whistling_time_per_dolphin ~ acoustic.dta$beacon)
-names = computeStats(acoustic.dta, beacon, whistling_time_per_dolphin/375)["beacon"]
-barPlot(computeStats(acoustic.dta, beacon, whistling_time_per_dolphin/375),
+names = computeStats(acoustic.dta, beacon, whistling_time_per_dolphin/n_bins)["beacon"]
+barPlot(computeStats(acoustic.dta, beacon, whistling_time_per_dolphin/n_bins),
         NULL,
         beacon, old_names = unlist(names), new_names = unlist(names),
         xname="Signals from bio-inspired beacon", height=0.9, size=3,
-        ytitle="Mean whistling time per dolphin per min")+
+        ytitle="Mean whistling time per dolphin per min (in sec)")+
   theme(axis.text.x=element_text(size=8))+
   scale_x_discrete(guide=guide_axis(n.dodge = 2))
 # NC stands for "Unknown". Corresponding to categories where the beacon was not turned on yet ('BEF')
@@ -468,7 +469,7 @@ barPlot(computeStats(acoustic.dta, beacon, whistling_time_per_dolphin/375),
 # BBPs
 #KW test
 kruskal.test(acoustic.dta$BBPs_per_dolphin ~ acoustic.dta$beacon)
-names = computeStats(acoustic.dta, beacon, whistling_time_per_dolphin/375)["beacon"]
+names = computeStats(acoustic.dta, beacon, BBPs_per_dolphin)["beacon"]
 barPlot(computeStats(acoustic.dta, beacon, BBPs_per_dolphin),
         NULL,
         beacon, old_names = unlist(names), new_names = unlist(names),
@@ -481,7 +482,7 @@ barPlot(computeStats(acoustic.dta, beacon, BBPs_per_dolphin),
 # Clicks
 #KW test
 kruskal.test(acoustic.dta$clicks_per_dolphin ~ acoustic.dta$beacon)
-names = computeStats(acoustic.dta, beacon, whistling_time_per_dolphin/375)["beacon"]
+names = computeStats(acoustic.dta, beacon, clicks_per_dolphin)["beacon"]
 barPlot(computeStats(acoustic.dta, beacon, clicks_per_dolphin),
         NULL,
         beacon, old_names = unlist(names), unlist(names),
@@ -494,7 +495,7 @@ barPlot(computeStats(acoustic.dta, beacon, clicks_per_dolphin),
 
 #### Plots by number of dolphins ####
 # Whistles
-numb_stats_w <- computeStats(acoustic.dta, number, total_whistles_duration/375)
+numb_stats_w <- computeStats(acoustic.dta, number, total_whistles_duration/n_bins)
 numb_stats_w[is.na(numb_stats_w)] <- 0
 numb_stats_w$number <- as.factor(numb_stats_w$number)
 
@@ -504,7 +505,7 @@ numb_stats_w %>%
                 color="red", width=.1, show.legend = FALSE)+
   geom_point() + geom_line() +
   theme_classic() + theme(text=element_text(size=12)) +
-  ylab("Mean whistling time per min")+
+  ylab("Mean whistling time per dolphin per min (in sec)")+
   xlab("Number of dolphins in group")
 
 # BBPs
@@ -518,7 +519,7 @@ numb_stats_b %>%
                 color="red", width=.1, show.legend = FALSE)+
   geom_point() + geom_line() +
   theme_classic() + theme(text=element_text(size=12)) +
-  ylab("Number of BBPs per min")+
+  ylab("Number of BBPs per dolphin per min")+
   xlab("Number of dolphins in group")
 
 # Clicks
@@ -532,13 +533,13 @@ numb_stats_c %>%
                 color="red", width=.1)+
   geom_point() + geom_line() +
   theme_classic() + theme(text=element_text(size=12)) +
-  ylab("Mean number of clicks per min")+
+  ylab("Mean number of clicks per dolphin per min")+
   xlab("Number of echolocation clicks in group")
 
 
 #### Plots by Group ID ####
 # Whistles
-numb_stats_w <- computeStats(acoustic.dta, ID, whistling_time_per_dolphin/375)
+numb_stats_w <- computeStats(acoustic.dta, ID, whistling_time_per_dolphin/n_bins)
 numb_stats_w[is.na(numb_stats_w)] <- 0
 numb_stats_w$ID <- as.factor(numb_stats_w$ID)
 numb_stats_w %>%
@@ -547,7 +548,7 @@ numb_stats_w %>%
                 color="red", width=.1, show.legend = FALSE)+
   geom_point() + scale_x_discrete(guide = guide_axis(n.dodge = 2))+
   theme_light() + theme(text=element_text(size=12)) +
-  ylab("Mean whistling time per min")+
+  ylab("Mean whistling time per dolphin per min (in sec)")+
   xlab("ID of dolphins group")
 
 # BBPs
@@ -561,7 +562,7 @@ numb_stats_b %>%
                 color="red", width=.1, show.legend = FALSE)+
   geom_point() + scale_x_discrete(guide = guide_axis(n.dodge = 2))+
   theme_light() + theme(text=element_text(size=12)) +
-  ylab("Number of BBPs per min")+
+  ylab("Number of BBPs per dolphin per min")+
   xlab("ID of dolphins group")
 
 # Clicks
@@ -575,7 +576,7 @@ numb_stats_c %>%
                 color="red", width=.1)+
   geom_point() + scale_x_discrete(guide = guide_axis(n.dodge = 2))+
   theme_light() + theme(text=element_text(size=12)) +
-  ylab("Mean number of clicks per min")+
+  ylab("Mean number of clicks per dolphin per min")+
   xlab("ID of dolphin group")
 
 # KW test on IDs 

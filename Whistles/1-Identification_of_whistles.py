@@ -55,7 +55,7 @@ print("Parameters ready to use!")
 
 #%% Importation of data and functions
 print("\rImportation of csv data...", end="\r")
-from WhistleUtils import get_csv, plot_spectrums, get_local_maxima, get_trajectories, \
+from WhistleUtils import get_csv, get_local_maxima, get_trajectories, \
 	select_trajectories, sparsity_ridoff, harmonize_trajectories
 data_20_21, audio_paths = get_csv(csv_f, slash="/")
 print("Importation of csv data complete!\n")
