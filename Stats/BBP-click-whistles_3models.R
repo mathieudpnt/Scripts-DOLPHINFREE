@@ -544,7 +544,7 @@ numb_stats_w[is.na(numb_stats_w)] <- 0
 numb_stats_w$ID <- as.factor(numb_stats_w$ID)
 numb_stats_w %>%
   ggplot(aes(x=ID, y=mean, group=1)) +
-  geom_errorbar(aes(x=ID, ymin=mean-sd, ymax=mean+sd), 
+  geom_errorbar(aes(x=ID, ymin=mean-sd, ymax=mean+ci), 
                 color="red", width=.1, show.legend = FALSE)+
   geom_point() + scale_x_discrete(guide = guide_axis(n.dodge = 2))+
   theme_light() + theme(text=element_text(size=12)) +
@@ -558,7 +558,7 @@ numb_stats_b$ID <- as.factor(numb_stats_b$ID)
 
 numb_stats_b %>%
   ggplot(aes(x=ID, y=mean, group=1)) +
-  geom_errorbar(aes(x=ID, ymin=mean-sd, ymax=mean+sd), 
+  geom_errorbar(aes(x=ID, ymin=mean-sd, ymax=mean+ci), 
                 color="red", width=.1, show.legend = FALSE)+
   geom_point() + scale_x_discrete(guide = guide_axis(n.dodge = 2))+
   theme_light() + theme(text=element_text(size=12)) +
@@ -572,7 +572,7 @@ numb_stats_c$ID <- as.factor(numb_stats_c$ID)
 
 numb_stats_c %>%
   ggplot(aes(x=ID, y=mean, group=1)) +
-  geom_errorbar(aes(x=ID, ymin=mean-sd, ymax=mean+sd), 
+  geom_errorbar(aes(x=ID, ymin=mean-sd, ymax=mean+ci), 
                 color="red", width=.1)+
   geom_point() + scale_x_discrete(guide = guide_axis(n.dodge = 2))+
   theme_light() + theme(text=element_text(size=12)) +
@@ -585,3 +585,40 @@ data_test <- acoustic.dta[acoustic.dta$ID!="2",]
 print( posthocKW(data_test$whistling_time_per_dolphin, data_test$ID))
 print( posthocKW(data_test$BBPs_per_dolphin, data_test$ID))
 print( posthocKW(data_test$clicks_per_dolphin, data_test$ID))
+
+#### Plots by days #### 
+# clicks
+numb_stats_c <- computeStats(acoustic.dta, date, clicks_per_dolphin)
+
+numb_stats_c %>%
+  ggplot(aes(x=date, y=mean, group=1)) +
+  geom_errorbar(aes(x=date, ymin=mean-sd, ymax=mean+ci), 
+                color="black", width=.1)+
+  geom_point() + scale_x_discrete(guide = guide_axis(n.dodge=2)) +
+  theme_classic() + theme(text=element_text(size=12)) +
+  ylab("Mean number of clicks per dolphin per min")+
+  xlab("Days of recording")
+
+# BBPs
+numb_stats_c <- computeStats(acoustic.dta, date, BBPs_per_dolphin)
+
+numb_stats_c %>%
+  ggplot(aes(x=date, y=mean, group=1)) +
+  geom_errorbar(aes(x=date, ymin=mean-sd, ymax=mean+ci), 
+                color="black", width=.1)+
+  geom_point() + scale_x_discrete(guide = guide_axis(n.dodge=2)) +
+  theme_classic() + theme(text=element_text(size=12)) +
+  ylab("Number of BBPs per dolphin per min")+
+  xlab("Days of recording")
+
+# Whistles
+numb_stats_c <- computeStats(acoustic.dta, date, whistling_time_per_dolphin/n_bins)
+
+numb_stats_c %>%
+  ggplot(aes(x=date, y=mean, group=1)) +
+  geom_errorbar(aes(x=date, ymin=mean-sd, ymax=mean+ci), 
+                color="black", width=.1)+
+  geom_point() + scale_x_discrete(guide = guide_axis(n.dodge=2)) +
+  theme_classic() + theme(text=element_text(size=12)) +
+  ylab("Mean whistling time per dolphin per min (in sec)")+
+  xlab("Days of recording")
