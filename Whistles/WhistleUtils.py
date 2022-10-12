@@ -112,11 +112,11 @@ def get_csv(csv_folder, slash="\\"):
     return data_frame, sorted_names
 
 #%% Trajectories algorithms
-def get_local_maxima(spectrogram, spectrogram2, hardness, threshold=10e-5):
+def get_local_maxima(spectrum, spectrum2, hardness, threshold=10e-5):
     """
     Parameters
     ----------
-    spectrogram : NUMPY ARRAY 
+    spectrum : NUMPY ARRAY 
         Spectrogram (float values) of an audio signal. 
     hardness : INT or FLOAT
         Number of times a value has to be above the geometric mean in order to be kept.
@@ -128,21 +128,21 @@ def get_local_maxima(spectrogram, spectrogram2, hardness, threshold=10e-5):
     local_max2 : NUMPY ARRAY
         Spectrogram with 1 & 0 indicating local maxima above hardness*geom_mean
     """
-    local_max1 = np.zeros(spectrogram.shape, dtype=int)
-    local_max2 = np.zeros(spectrogram.shape, dtype=int)
-    geom_mean = gmean(gmean(spectrogram, axis=1))
-    geom_mean0 = gmean(spectrogram, axis=0)
-    geom_mean1 = gmean(spectrogram, axis=1)
-    # geom_mean0, geom_mean1 = gmean(spectrogram), gmean(spectrogram)
+    local_max1 = np.zeros(spectrum.shape, dtype=int)
+    local_max2 = np.zeros(spectrum.shape, dtype=int)
+    geom_mean = gmean(gmean(spectrum, axis=1))
+    geom_mean0 = gmean(spectrum, axis=0)
+    geom_mean1 = gmean(spectrum, axis=1)
+    # geom_mean0, geom_mean1 = gmean(spectrum), gmean(spectrum)
 
-    for each_bin in range(spectrogram.shape[1]):
-        for freq in range(1, spectrogram.shape[0]-1):
-            if (spectrogram2[freq, each_bin] > spectrogram2[freq-1, each_bin]) and \
-            (spectrogram2[freq, each_bin] > spectrogram2[freq+1, each_bin]):
+    for each_bin in range(spectrum.shape[1]):
+        for freq in range(1, spectrum.shape[0]-1):
+            if (spectrum1[freq, each_bin] > spectrum2[freq-1, each_bin]) and \
+            (spectrum2[freq, each_bin] > spectrum2[freq+1, each_bin]):
                 local_max1[freq, each_bin] = 1
-                if (spectrogram[freq, each_bin] > (threshold)):
-                    if (spectrogram[freq, each_bin] > (geom_mean0[each_bin]*hardness)):
-                        if (spectrogram[freq, each_bin] > (geom_mean1[freq]*hardness)):
+                if (spectrum[freq, each_bin] > (threshold)):
+                    if (spectrum[freq, each_bin] > (geom_mean0[each_bin]*hardness)):
+                        if (spectrum[freq, each_bin] > (geom_mean1[freq]*hardness)):
                             local_max2[freq, each_bin] = 1
 
     return local_max1, local_max2

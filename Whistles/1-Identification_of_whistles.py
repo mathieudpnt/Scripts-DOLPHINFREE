@@ -71,14 +71,14 @@ for file in range(len(audio_paths)):
 	# resample
 	signal_dec = resample(signal, int(((stop-start)*new_sr)))
 
-	# extract spectral informations
+	# extract spectrum informations
 	Magnitude_audio = stft(signal_dec, n_fft=nfft, hop_length=hop_length)
-	spectre = np.copy(np.abs(Magnitude_audio[f_min:,:]))
-	# PCEN could replace spectrogram in very noisy recordings
-	#spectre_pcen = pcen(np.abs(Magnitude_audio) * (2**31), bias=10)[f_min:,:]
+	spectrum = np.copy(np.abs(Magnitude_audio[f_min:,:]))
+	# PCEN could replace spectrum in very noisy recordings
+	#spectrum_pcen = pcen(np.abs(Magnitude_audio) * (2**31), bias=10)[f_min:,:]
 
 	# Selection algorithm
-	max_loc_per_bin_check1 = get_local_maxima(spectre, spectre, nrg_rap)[1]
+	max_loc_per_bin_check1 = get_local_maxima(spectrum, spectrum, nrg_rap)[1]
 	trajectories = get_trajectories(max_loc_per_bin_check1, dist_f=dist_f, dist_t=dist_t)
 	final_traj = select_trajectories(trajectories, taille_traj_min, min_acce, max_acce, verbose=0)
 	corrected_traj = sparsity_ridoff(final_traj, error_thresh=sparsity)

@@ -109,8 +109,8 @@ for file in range(len(audio_paths)):
 		    width=[0,max_length])[0]
 
 		Magnitude_audio = stft(signal_high, n_fft=nfft, hop_length=hop_length)
-		#spectre = amplitude_to_db(np.abs(Magnitude_audio))
-		spectre = pcen(np.abs(Magnitude_audio) * (2**31))
+		#spectrum = amplitude_to_db(np.abs(Magnitude_audio))
+		spectrum = pcen(np.abs(Magnitude_audio) * (2**31))
 
 		# show ICI of each BBP
 		n_BBP = np.unique(BBP_all[use,-1])
@@ -143,7 +143,7 @@ for file in range(len(audio_paths)):
 				axs[0].axis(xmin=lower, xmax=upper)
 				axs[0].tick_params('x', labelbottom=False, bottom=False)
 
-				axs[1].imshow(spectre[::-1][:,int(lower/hop_length):int(upper/hop_length)], 
+				axs[1].imshow(spectrum[::-1][:,int(lower/hop_length):int(upper/hop_length)], 
 				    aspect='auto', interpolation='none', cmap='jet', 
 				    extent=(0,(upper-lower)/sr,0,int(sr/2)))
 				axs[1].set_title("Spectrogram (dB scale)")
@@ -195,7 +195,7 @@ for file in range(len(audio_paths)):
 
 			plt.close('all')
 		del signal, signal_high, signal_peaks, tk_signal,\
-		Magnitude_audio, spectre
+		Magnitude_audio, spectrum
 
 		dict_annot[audio_paths[file]] = BBP_manual
 		# Temp save (in case of a crash)
