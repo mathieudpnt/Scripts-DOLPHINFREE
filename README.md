@@ -28,4 +28,4 @@ Feel free to contact me if you have questions, tips or anything else to say. I'd
 Loïc Lehnhoff - <loic.lehnhoff@gmail.com>
 
 ## Related to
-Results and scripts are presented in details in: Lehnhoff, L.; Glotin, H.; Bernard, S.; Dabin, W.; Le Gall, Y.; Menut, E.; Meheust, E.; Peltier, H.; Pochat, A.; Pochat, K.; Rimaud, T.; Sourget, Q.; Spitz, J.; Van Canneyt, O.; Mérigot, B. *Behavioural response of common *dolphins Delphinus* delphis to a bio-inspired acoustic device for limiting fishery by-catch.* Sustainability, 1, 0 (**IN SUBMISSION PROCESS**)
+Results and scripts are presented in details in: Lehnhoff, L.; Glotin, H.; Bernard, S.; Dabin, W.; Le Gall, Y.; Menut, E.; Meheust, E.; Peltier, H.; Pochat, A.; Pochat, K.; Rimaud, T.; Sourget, Q.; Spitz, J.; Van Canneyt, O.; Mérigot, B. Behavioural Responses of Common Dolphins Delphinus delphis to a Bio-Inspired Acoustic Device for Limiting Fishery By-Catch. Sustainability 2022, 14, 13186. https://doi.org/10.3390/su142013186
