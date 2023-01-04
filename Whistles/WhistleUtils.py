@@ -17,6 +17,8 @@ from scipy.stats.mstats import gmean
 from scipy.spatial import distance
 from scipy import interpolate
 
+import matplotlib.pyplot as plt
+
 #%% Functions process
 def import_csv(csv_name, folder, useless=True, slash="/"):
     """
@@ -137,7 +139,7 @@ def get_local_maxima(spectrum, spectrum2, hardness, threshold=10e-5):
 
     for each_bin in range(spectrum.shape[1]):
         for freq in range(1, spectrum.shape[0]-1):
-            if (spectrum1[freq, each_bin] > spectrum2[freq-1, each_bin]) and \
+            if (spectrum[freq, each_bin] > spectrum2[freq-1, each_bin]) and \
             (spectrum2[freq, each_bin] > spectrum2[freq+1, each_bin]):
                 local_max1[freq, each_bin] = 1
                 if (spectrum[freq, each_bin] > (threshold)):
@@ -385,8 +387,8 @@ def get_category(samples, names, data_frame, category='acoustic'):
         
     Returns
     -------
-    TYPE
-        DESCRIPTION.
+    cat_list : LIST OF STRINGS
+        A list of categories corresponding to inputs.
 
     """
     use_samples = np.array([file[:23] for file in samples])
@@ -426,3 +428,59 @@ def get_category(samples, names, data_frame, category='acoustic'):
         cat_list[NC] = 'NC'
     
     return cat_list
+
+
+def plot_spectrums(list_of_spectrums, cmaps=[], direction=-1, title="Whistles", 
+    bins=1, titles=[], ylabels=[]):
+    """
+    Parameters
+    ----------
+    list_of_spectrums : LIST OF NUMPY ARRAYS
+        List of images that will be plotted, should be a spectrogram
+        or a binary image (with 0s and 1s). 
+        All arrays should be of the same shape.
+    cmaps : LIST
+        List that must contain the same number of elements as list_of_spectrums.
+        Each element is either the name of a cmap (e.g. "viridis") or a custom cmap.
+    direction : INT, optionnal
+        Must be 1 or -1. If -1 it inverses the order for frequency display.
+        Default is -1.
+    title : STRING, optionnal
+        Title that will be displayed on top of the plot.
+    bins : FLOAT, optionnal
+        Number of bins (windows in spectrogram) per second
+    titles : LIST OF STRINGS
+        List that must contain the same number of elements as list_of_spectrums.
+        Titles associated with each spectrogram in plot.
+    ylabels : LIST OF STRINGS
+        List that must contain the same number of elements as list_of_spectrums.
+        Name of y-axis for each spectrogram.
+
+    Returns
+    -------
+    fig, axs : MATPLOTLIB OBJECT
+        figure and axis object that contain the plot of all given spectrogram.
+
+    """
+    n = len(list_of_spectrums)
+    fig, axs = plt.subplots(nrows=n, sharex=True, sharey=True, figsize=(15,15))
+
+    if len(cmaps) == 0:
+        cmaps = ['gray_r']*n
+
+    for i in range(n):
+        axs[i].imshow(list_of_spectrums[i][::direction], aspect='auto', 
+            interpolation='nearest', cmap=cmaps[i])
+        axs[i].set_yticklabels([])
+        if len(titles) > 0:
+            axs[i].set_title(titles[i], fontsize=30)
+        if len(ylabels) >0:
+            axs[i].set_ylabel(ylabels[i], fontsize=25)
+        axs[i].tick_params(axis='both', which='both', labelsize=20)
+    if bins !=1 :
+        axs[n-1].set_xlabel(f"Time in bins (1 bin = 1/{bins} sec)", fontsize=25)
+    else:
+        axs[n-1].set_xlabel(f"Time in bins)", fontsize=25)
+    fig.suptitle(title)
+    fig.tight_layout(pad=1)
+    return fig, axs

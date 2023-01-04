@@ -22,7 +22,7 @@ print("Importation of packages complete!")
 #%% Parameters
 # Paths
 print("\rSetting up parameters...", end="\r")
-audio_f = "./../Audio_data"  # Path to recordings  
+audio_f = "./../Audio_data"  # Path to recordings
 csv_f = "./../CSV_data"      # Path to data in csv
 save_f = "./Trajectories"	 # Path were results are stored
 
@@ -100,3 +100,32 @@ for file in range(len(audio_paths)):
 
 	print(f"\r\tFile {file+1} on {len(audio_paths)}: found {len(values)} whistles", end='\r')
 print("\nDetection of whistles finished!")
+
+#%% Uncomment this section to plot the last audio  in loop
+# from WhistleUtils import plot_spectrums
+# final_traj[final_traj != 0] = 1 # binarisation
+
+# # generate bright colors to differenciate trajectories
+# prism = cm.get_cmap('prism', 256)
+# newcolors = prism(np.linspace(0, 1, np.unique(harmonized_traj).shape[0]))
+# pink = np.array([0/256, 0/256, 0/256, 1])
+# newcolors[0, :] = pink
+# newcmp = ListedColormap(newcolors)
+
+# # By default shows the whole audio
+# start = 0
+# stop = spectrum.shape[1]
+
+# # Create figure
+# fig, axs = plot_spectrums([amplitude_to_db(spectrum), 
+#                     max_loc_per_bin_check1, 
+#                     final_traj, 
+#                     harmonized_traj], 
+#                ['gray_r', 'gray', 'gray', newcmp], 
+#                titles=['Spectrogram (dB scale)', 'Local maxima selection', 'Extraction of continuous trajectories',
+#                'Exclusion of harmonics'], 
+#                ylabels=["Frequency"]*4,
+#                bins=375, title="")
+# # Update view
+# axs[3].set_xlim(start,stop)
+# plt.show(block=False)
